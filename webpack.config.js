@@ -4,7 +4,10 @@ const CleanWebpackPlugin = require('clean-webpack-plugin')
 
 module.exports = {
 	mode: 'production', //development
-	entry: './index.js',
+	entry: { // 可以打包多个入口文件
+		main: './src/index.js',
+		sub: './src/index.js'
+	},
 	module: {
 		rules: [
 			{
@@ -60,7 +63,8 @@ module.exports = {
         new CleanWebpackPlugin(['dist'])
 	],
 	output: {
-		filename: 'bundle.js',
+		publicPath: 'http://cdn.com.cn', // html引入打包生成的js文件路径之前加上的前缀
+		filename: '[name].js', // name对应entry配置的名字生成js文件
 		path: path.resolve(__dirname, 'bundle')
 	}
 }
