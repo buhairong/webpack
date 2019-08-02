@@ -14,6 +14,15 @@ module.exports = {
 		main: './src/index.js',
 		sub: './src/index.js'
 	},
+	devServer: {
+		contentBase: './dist',
+		open: true, // 自动打开浏览器
+		port: 8080, // 配置浏览器启动端口号，默认为8080
+		// 跨域代理
+		proxy: {
+			'./api': 'http://localhost:3000'
+		}
+	},
 	module: {
 		rules: [
 			{
