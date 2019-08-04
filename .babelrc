@@ -1,0 +1,17 @@
+{
+  "presets": [
+    [
+      "@babel/preset-env", {
+        "useBuiltIns": "usage"  // 弥补低浏览器不存在的语法时，只加载业务代码所使用到的ES6语法，以减少打包文件大小
+      }
+    ],
+    "@babel/preset-react"
+  ]
+  // 如果是写库时，使用以下配置，避免polyfill会污染全局环境
+  /*"plugins": [["@babel/plugin-transform-runtime", {
+      "corejs": 2,
+      "helpers": true,
+      "regenerator": true,
+      "useESModules": false
+  }]]*/
+}

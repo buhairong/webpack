@@ -1,6 +1,7 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
+const webpack = require('webpack')
 
 module.exports = {
 	mode: 'production', //development
@@ -18,6 +19,8 @@ module.exports = {
 		contentBase: './dist',
 		open: true, // 自动打开浏览器
 		port: 8080, // 配置浏览器启动端口号，默认为8080
+		hot: true, // 开启热模块更新，当代码修改时，浏览器不刷新的情况下，显示修改后的代码
+		hotOnly: true, // 禁止浏览器自动刷新
 		// 跨域代理
 		proxy: {
 			'./api': 'http://localhost:3000'
@@ -25,6 +28,11 @@ module.exports = {
 	},
 	module: {
 		rules: [
+            {
+                test: /\.js$/,
+				exclude: /node_modules/, // 对第三方库的js文件不使用babel-loader
+                loader: 'babel-loader'
+            },
 			{
 				test: /\.(jpg|png|gif)$/,
 				use: {
@@ -43,7 +51,7 @@ module.exports = {
                 }
             },
             {
-                test: /\.(css|scss)/,
+                test: /\.scss/,
                 /*
                 	css-loader会分析出css文件之间的关系(例如在css文件里import别的css文件),合并成一个css，
                 	style-loader把合并出的css再挂载到head里
@@ -62,6 +70,14 @@ module.exports = {
 					'postcss-loader' // 为css3自动添加各厂商前缀
 				]  // loader是有执行顺序的，从右到左执行
             },
+            {
+                test: /\.css/,
+                use: [
+                    'style-loader',
+                    'css-loader',
+                    'postcss-loader' // 为css3自动添加各厂商前缀
+                ]  // loader是有执行顺序的，从右到左执行
+            },
 			{
 				test: /\.vue$/,
 				use: {
@@ -75,8 +91,13 @@ module.exports = {
 		new HtmlWebpackPlugin({
 			template: 'src/index.htm'
 		}),
-        new CleanWebpackPlugin(['dist'])
+        new CleanWebpackPlugin(['dist']),
+		new webpack.HotModuleReplacementPlugin()
 	],
+	optimization: {
+    	// 只打包用到的方法，package.json里配置： "sideEffects": false
+		usedExports: true
+	},
 	output: {
 		publicPath: 'http://cdn.com.cn', // html引入打包生成的js文件路径之前加上的前缀
 		filename: '[name].js', // name对应entry配置的名字生成js文件
