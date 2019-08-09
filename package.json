@@ -7,6 +7,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev-build": "webpack --config ./build/webpack.dev.js",
     "start": "http-server dist",
     "dev": "webpack-dev-server --config ./build/webpack.dev.js",
     "build": "webpack --config ./build/webpack.prod.js"

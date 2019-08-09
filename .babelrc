@@ -6,7 +6,8 @@
       }
     ],
     "@babel/preset-react"
-  ]
+  ],
+  "plugins": ["dynamic-import-webpack"]
   // 如果是写库时，使用以下配置，避免polyfill会污染全局环境
   /*"plugins": [["@babel/plugin-transform-runtime", {
       "corejs": 2,

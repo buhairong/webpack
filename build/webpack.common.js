@@ -4,15 +4,8 @@ const CleanWebpackPlugin = require('clean-webpack-plugin')
 
 module.exports = {
     entry: { // 可以打包多个入口文件
-        main: './src/index.js',
-        sub: './src/index.js'
+        main: './src/index.js'
     },
-    plugins: [
-        new HtmlWebpackPlugin({
-            template: 'src/index.htm'
-        }),
-        new CleanWebpackPlugin(['dist'])
-    ],
     module: {
         rules: [
             {
@@ -73,9 +66,28 @@ module.exports = {
             }
         ]
     },
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: 'src/index.htm'
+        }),
+        new CleanWebpackPlugin(['dist'], {
+            root: path.resolve(__dirname, '../')
+        })
+    ],
+    optimization: {
+        /*
+            代码分割
+            webpack中实现代码分割，两种方式
+            1. 同步代码：只需要在 webpack.common.js 中做optimization的配置
+            2. 异步代码(import)：异步代码，无需做任何配置，会自动进行代码分割
+        */
+        splitChunks: {
+            chunks: 'all'
+        }
+    },
     output: {
         publicPath: 'http://cdn.com.cn', // html引入打包生成的js文件路径之前加上的前缀
         filename: '[name].js', // name对应entry配置的名字生成js文件
-        path: path.resolve(__dirname, 'bundle')
+        path: path.resolve(__dirname, '../dist')
     }
 }
