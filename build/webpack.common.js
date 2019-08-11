@@ -31,34 +31,6 @@ module.exports = {
                 }
             },
             {
-                test: /\.scss/,
-                /*
-                	css-loader会分析出css文件之间的关系(例如在css文件里import别的css文件),合并成一个css，
-                	style-loader把合并出的css再挂载到head里
-                	sass-loader处理sass文件
-                */
-                use: [
-                    'style-loader',
-                    {
-                        loader: 'css-loader',
-                        options: {
-                            importLoaders: 2,  //当sass文件里引入别的sass文件时，会重复下面2步loader过程，而不是直接使用css-loader
-                            modules: true  // 使css打包模块化
-                        }
-                    },
-                    'sass-loader',
-                    'postcss-loader' // 为css3自动添加各厂商前缀
-                ]  // loader是有执行顺序的，从右到左执行
-            },
-            {
-                test: /\.css/,
-                use: [
-                    'style-loader',
-                    'css-loader',
-                    'postcss-loader' // 为css3自动添加各厂商前缀
-                ]  // loader是有执行顺序的，从右到左执行
-            },
-            {
                 test: /\.vue$/,
                 use: {
                     loader: 'vue-loader'
@@ -75,6 +47,7 @@ module.exports = {
         })
     ],
     optimization: {
+        usedExports: true,
         /*
             代码分割
             webpack中实现代码分割，两种方式
@@ -82,12 +55,31 @@ module.exports = {
             2. 异步代码(import)：异步代码，无需做任何配置，会自动进行代码分割
         */
         splitChunks: {
-            chunks: 'all'
+            chunks: 'all', // all 对同步和异步引入代码都进行代码分割
+            minSize: 30000, // 引入的库大于30000字节时，进行代码分割
+            minChunks: 1, // 当引入的库被引入的次数大于1时，进行代码分割
+            maxAsyncRequests: 5, // 最多分割成5个JS
+            maxInitialRequests: 3, // 首页引入文件最多分割成3个JS
+            automaticNameDelimiter: '~', // 文件自动生成时的连接符
+            name: true, // 打包生成的文件名可以使用cacheGroups里filename指定的文件名
+            cacheGroups: {
+                vendors: {
+                    test: /[\\/]node_modules[\\/]/, // 检查引入文件是否在node_modules里，如果是，进行代码分割
+                    priority: -10, // 当一个引入的库同时满足vendors和default的要求时，看priority优先级，值越大，优先级越高
+                    filename: 'vendors.js' //指定引入文件生成的JS文件名
+                },
+                default: {
+                    priority: -20,
+                    reuseExistingChunk: true, // 忽略已经被引入的模块
+                    filename: 'common.js'
+                }
+            }
         }
     },
     output: {
-        publicPath: 'http://cdn.com.cn', // html引入打包生成的js文件路径之前加上的前缀
+        //publicPath: 'http://cdn.com.cn', // html引入打包生成的js文件路径之前加上的前缀
         filename: '[name].js', // name对应entry配置的名字生成js文件
+        chunkFilename: '[name].chunk.js', // name对应entry配置的名字生成js文件
         path: path.resolve(__dirname, '../dist')
     }
 }

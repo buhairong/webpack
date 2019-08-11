@@ -21,13 +21,45 @@ const devConfig = {
 			'./api': 'http://localhost:3000'
 		}
 	},
+	module: {
+    	rules: [
+            {
+                test: /\.scss/,
+                /*
+                	css-loader会分析出css文件之间的关系(例如在css文件里import别的css文件),合并成一个css，
+                	style-loader把合并出的css再挂载到head里
+                	sass-loader处理sass文件
+                */
+                use: [
+                    'style-loader',
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            importLoaders: 2,  //当sass文件里引入别的sass文件时，会重复下面2步loader过程，而不是直接使用css-loader
+                            modules: true  // 使css打包模块化
+                        }
+                    },
+                    'sass-loader',
+                    'postcss-loader' // 为css3自动添加各厂商前缀
+                ]  // loader是有执行顺序的，从右到左执行
+            },
+            {
+                test: /\.css/,
+                use: [
+                    'style-loader',
+                    'css-loader',
+                    'postcss-loader' // 为css3自动添加各厂商前缀
+                ]  // loader是有执行顺序的，从右到左执行
+            },
+		]
+	},
 	plugins: [
 		new webpack.HotModuleReplacementPlugin()
 	],
-	optimization: {
+	/*optimization: {
     	// 只打包用到的方法，package.json里配置： "sideEffects": false
 		usedExports: true
-	}
+	}*/
 }
 
 module.exports = merge(commonConfig, devConfig)
