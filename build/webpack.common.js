@@ -11,6 +11,14 @@ module.exports = {
         rules: [
             {
                 test: /\.js$/,
+                use: [
+                    {
+                        loader: 'babel-loader'
+                    },
+                    {
+                        loader: 'imports-loader?this=>window' // 让各模块下的this指向window
+                    }
+                ],
                 exclude: /node_modules/, // 对第三方库的js文件不使用babel-loader
                 loader: 'babel-loader'
             },
@@ -47,7 +55,8 @@ module.exports = {
             root: path.resolve(__dirname, '../')
         }),
         new webpack.ProvidePlugin({
-            $: 'jquery'  // 这样配置，在各模块都可以使用
+            $: 'jquery',  // 这样配置，在各模块都可以使用
+            _join: ['lodash', 'join']  // 这样配置，使用lodash里的join方法
         })
     ],
     optimization: {
