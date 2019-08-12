@@ -60,6 +60,10 @@ const devConfig = {
     	// 只打包用到的方法，package.json里配置： "sideEffects": false
 		usedExports: true
 	}*/
+    output: {
+        filename: '[name].js', // name对应entry配置的名字生成js文件
+        chunkFilename: '[name].chunk.js', // name对应entry配置的名字生成js文件
+    }
 }
 
 module.exports = merge(commonConfig, devConfig)

@@ -53,7 +53,11 @@ const prodConfig = {
             filename: '[name].css',
             chunkFilename: '[name].chunk.css'
         })
-    ]
+    ],
+    output: {
+        filename: '[name].[contenthash].js', // name对应entry配置的名字生成js文件  contenthash根据content如有改变，产生新的哈希值
+        chunkFilename: '[name].[contenthash].js' // name对应entry配置的名字生成js文件
+    }
 }
 
 module.exports = merge(commonConfig, prodConfig)

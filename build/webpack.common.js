@@ -1,6 +1,7 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
+const webpack = require('webpack')
 
 module.exports = {
     entry: { // 可以打包多个入口文件
@@ -44,9 +45,15 @@ module.exports = {
         }),
         new CleanWebpackPlugin(['dist'], {
             root: path.resolve(__dirname, '../')
+        }),
+        new webpack.ProvidePlugin({
+            $: 'jquery'  // 这样配置，在各模块都可以使用
         })
     ],
     optimization: {
+        runtimeChunk: {
+            name: 'runtime' // 当代码没有改变时，文件名哈希值不会变。webpack4以上不用配置
+        },
         usedExports: true,
         /*
             代码分割
@@ -76,10 +83,9 @@ module.exports = {
             }
         }
     },
+    //performance: false, // 去掉打包时提示性能的警告
     output: {
         //publicPath: 'http://cdn.com.cn', // html引入打包生成的js文件路径之前加上的前缀
-        filename: '[name].js', // name对应entry配置的名字生成js文件
-        chunkFilename: '[name].chunk.js', // name对应entry配置的名字生成js文件
         path: path.resolve(__dirname, '../dist')
     }
 }
